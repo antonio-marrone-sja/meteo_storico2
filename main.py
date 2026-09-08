@@ -8,7 +8,7 @@ DATA_INIZIO = "2026-08-31"
 DATA_FINE = "2026-09-06"
 
 # STEP 0 — Studente 1: chiede il nome della citta' e trova le coordinate
-CITTA = input("Di quale citta' vuoi il meteo storico? ")
+CITTA = input("Di quale citta' vuoi il meteo storico? ").strip()
 coordinate = cerca_coordinate(CITTA)
 
 if coordinate is None:
