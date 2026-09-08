@@ -2,7 +2,7 @@
 from meteo_api import cerca_coordinate, scarica_dati_storici
 from meteo_parser import analizza_dati_storici, calcola_statistiche
 from meteo_file import salva_json, scrivi_report
-from meteo_display import stampa_previsioni, stampa_statistiche
+from meteo_display2 import stampa_previsioni, stampa_statistiche
 
 DATA_INIZIO = "2026-08-31"
 DATA_FINE = "2026-09-06"
