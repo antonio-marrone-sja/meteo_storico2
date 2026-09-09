@@ -1,6 +1,5 @@
 import csv
 import json
-import requests
 
 
 
@@ -34,13 +33,31 @@ def scrivi_report(previsioni, statistiche, citta, percorso):
 
     print(f"Report scritto: {percorso}")
 
-def esporta_csv(previsione, percorso):
+def salva_csv(previsioni, percorso="previsioni_storiche.csv"):
 
-    nomi_colonne = ["data", "temp_max", "temp_min", "consiglio"]
+    nomi_colonne = ["data", "temp_max", "temp_min", "condizioni", "precipitazioni_mm", "umidita_pct", "consiglio"]
 
     with open(percorso, "w", newline="", encoding="utf-8") as f:
-
         scrittore = csv.DictWriter(f, fieldnames=nomi_colonne)
+        scrittore.writeheader()
+
+        for giorno in previsioni:
+            # Crea una copia per aggiungere la nuova colonna
+            riga = giorno
+
+            # 1. Se piove (precipitazioni > 0 oppure condizione indica pioggia)
+            if giorno.get("precipitazioni_mm", 0) > 0 or "pioggia" in giorno.get("condizioni", "").lower():
+                riga["consiglio"] = "Restare a casa"
+            # 2. Se non piove e fa caldo
+            elif giorno.get("temp_max", 0) >= 26.0:
+                riga["consiglio"] = "Giornata da mare"
+            # 3. Se non piove e fa più fresco
+            else:
+                riga["consiglio"] = "Giornata da montagna/escursione"
+
+            scrittore.writerow(riga)
+
+    print(f"File CSV salvato con successo: {percorso}")
 
 # --- BLOCCO DI TEST ---
 if __name__ == "__main__":
@@ -86,5 +103,8 @@ if __name__ == "__main__":
 
     # Chiamata alla Funzione 2
     scrivi_report(mie_previsioni, mie_statistiche, "Agrigento", "report_meteo_storico.txt")
+
+    # Chiamata Funzione 3
+    salva_csv(mie_previsioni, "previsioni_storiche.csv")
 
     print("Test completato con successo!")
