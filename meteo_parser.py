@@ -57,3 +57,53 @@ def calcola_statistiche(previsioni):
     }
 
     return statistiche
+
+
+def confronta_citta(dati_multi_citta):
+    """
+    Riceve {nome_citta: dati_previsioni} e ritorna un dizionario con
+    la citta' piu' calda e la citta' piu' fredda, in base alla media
+    delle temperature massime.
+    """
+    medie_per_citta = {}
+
+    for nome_citta in dati_multi_citta:
+        dati_grezzi = dati_multi_citta[nome_citta]
+
+        # 1. Analizziamo le previsioni della città corrente
+        previsioni = analizza_previsioni(dati_grezzi)
+
+        # 2. Calcoliamo la media usando il pattern accumulatore
+        totale = 0
+        for giorno in previsioni:
+            totale += giorno["temp_max"]
+
+        media_di_questa_citta = totale / len(previsioni)
+
+        # 3. Salviamo la media nel dizionario
+        medie_per_citta[nome_citta] = media_di_questa_citta
+
+    # Se non ci sono città nel dizionario, ritorniamo un dizionario vuoto
+    if not medie_per_citta:
+        return {"citta_piu_calda": None, "citta_piu_fredda": None}
+
+    # Ora confrontiamo le medie tra tutte le città
+    # Prendiamo il primo nome di città come punto di partenza iniziale
+    nomi_citta = list(medie_per_citta.keys())
+    citta_piu_calda = nomi_citta[0]
+    citta_piu_fredda = nomi_citta[0]
+
+    # Scorriamo tutte le città per confrontare le medie
+    for nome_citta in medie_per_citta:
+        if medie_per_citta[nome_citta] > medie_per_citta[citta_piu_calda]:
+            citta_piu_calda = nome_citta
+
+        if medie_per_citta[nome_citta] < medie_per_citta[citta_piu_fredda]:
+            citta_piu_fredda = nome_citta
+
+    risultato = {
+        "citta_piu_calda": citta_piu_calda,
+        "citta_piu_fredda": citta_piu_fredda,
+    }
+    return risultato
+
