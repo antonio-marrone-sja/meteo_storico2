@@ -26,3 +26,20 @@ def stampa_statistiche(statistiche):
 
     freddo = statistiche["giorno_piu_freddo"]
     print(f"Giorno piu' freddo: {freddo['data']} ({freddo['temp_min']:.1f}°C)")
+
+    def stampa_previsioni_con_consiglio(previsioni, citta):
+        print(f"PREVISIONI — {citta}")
+        print("=" * 60)
+        print("GIORNO      | MAX (°C) | MIN (°C) | CONSIGLIO")
+        print("-" * 60)
+
+        for giorno in previsioni:
+            riga = f"{giorno['data']:<12}| {giorno['temp_max']:>8.1f} | {giorno['temp_min']:>8.1f} | {giorno['consiglio']:<30}"
+            print(riga)
+
+    def stampa_confronto_citta(risultato_confronto):
+        print()
+        print("CONFRONTO TRA CITTÀ")
+        print("=" * 40)
+        print("Città più calda: " + risultato_confronto["citta_piu_calda"])
+        print("Città più fredda: " + risultato_confronto["citta_piu_fredda"])
