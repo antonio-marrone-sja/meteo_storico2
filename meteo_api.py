@@ -1,7 +1,7 @@
 import requests
 
-URL_GEOCODING = "https://geocoding-api.open-meteo.com/v1/search"
-URL_ARCHIVIO = "https://archive-api.open-meteo.com/v1/archive"
+URL_GEOCODING = "https://geocoding-api.open-meteo.com/v1/search" # End Point
+URL_ARCHIVIO = "https://archive-api.open-meteo.com/v1/archive" # End Point
 
 def cerca_coordinate(nome_citta):
     """
@@ -61,3 +61,9 @@ def scarica_dati_storici(latitudine, longitudine, data_inizio, data_fine):
     except requests.exceptions.ConnectionError:
         print("Errore: nessuna connessione a Internet")
         return None
+
+    except requests.exceptions.RequestException:
+        print("Errore: errore nella richiesta")
+
+    except Exception as e:
+        print(f"Errore: {e}")
