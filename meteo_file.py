@@ -1,5 +1,8 @@
 import csv
 import json
+import requests
+
+
 
 def salva_json(previsioni, percorso):
 
