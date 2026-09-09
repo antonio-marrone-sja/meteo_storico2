@@ -29,7 +29,7 @@ def cerca_coordinate(nome_citta):
         return None
 
 
-def scarica_dati_storici(latitudine, longitudine, data_inizio, data_fine):
+def scarica_previsioni(latitudine, longitudine, data_inizio, data_fine):
     """
     Chiama l'API Open-Meteo Archive e ritorna il dizionario JSON
     con le temperature storiche nell'intervallo richiesto.
@@ -67,3 +67,23 @@ def scarica_dati_storici(latitudine, longitudine, data_inizio, data_fine):
 
     except Exception as e:
         print(f"Errore: {e}")
+
+def scarica_previsioni_multi_citta(lista_nomi_citta, data_inizio, data_fine):
+    """
+    Per ogni citta' nella lista, cerca le coordinate e scarica le
+    previsioni. Ritorna un dizionario {nome_citta: dati_previsioni}.
+    """
+    dati_per_citta = {}
+
+    for nome_citta in lista_nomi_citta:
+        coordinate = cerca_coordinate(nome_citta)
+
+        if coordinate is None:
+            print(f"Città non trovata, salto: {nome_citta}")
+            continue
+
+        latitudine, longitudine = coordinate
+        dati = scarica_previsioni(latitudine, longitudine, data_inizio, data_fine)
+        dati_per_citta[nome_citta] = dati
+
+    return dati_per_citta

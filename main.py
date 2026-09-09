@@ -1,35 +1,33 @@
-# main.py — fornito dal capogruppo, coordina tutto il progetto
-from meteo_api import cerca_coordinate, scarica_dati_storici
-from meteo_parser import analizza_dati_storici, calcola_statistiche
-from meteo_file import salva_json, scrivi_report
-from meteo_display2 import stampa_previsioni, stampa_statistiche
+from meteo_api import scarica_previsioni_multi_citta
+from meteo_parser import analizza_previsioni, confronta_citta, suggerisci_attivita
+from meteo_file import scrivi_report_multi_citta, esporta_csv
+from meteo_display import stampa_previsioni_con_consiglio, stampa_confronto_citta
 
-DATA_INIZIO = "2026-08-31"
-DATA_FINE = "2026-09-06"
+testo_citta = input("Quali città vuoi confrontare? (separate da virgola) ")
+lista_nomi_citta = testo_citta.split(",")
 
-# STEP 0 — Studente 1: chiede il nome della citta' e trova le coordinate
-CITTA = input("Di quale citta' vuoi il meteo storico? ").strip()
-coordinate = cerca_coordinate(CITTA)
+# Pulisce eventuali spazi attorno ai nomi digitati
+lista_nomi_citta_pulita = []
+for nome in lista_nomi_citta:
+    lista_nomi_citta_pulita.append(nome.strip())
 
-if coordinate is None:
-    print("Citta' non trovata. Programma terminato.")
-else:
-    latitudine, longitudine = coordinate
+dati_multi_citta = scarica_previsioni_multi_citta(lista_nomi_citta_pulita)
 
-    # STEP 1 — Studente 1: scarica i dati grezzi dall'API
-    dati = scarica_dati_storici(latitudine, longitudine, DATA_INIZIO, DATA_FINE)
+previsioni_elaborate_per_citta = {}
 
-    if dati is None:
-        print("Impossibile scaricare i dati. Programma terminato.")
-    else:
-        # STEP 2 — Studente 2: trasforma il JSON e calcola le statistiche
-        previsioni = analizza_dati_storici(dati)
-        statistiche = calcola_statistiche(previsioni)
+for nome_citta in dati_multi_citta:
+    dati_grezzi = dati_multi_citta[nome_citta]
+    previsioni = analizza_previsioni(dati_grezzi)
 
-        # STEP 3 — Studente 3: salva su file
-        salva_json(previsioni, "previsioni_storiche.json")
-        scrivi_report(previsioni, statistiche, CITTA, "report_meteo_storico.txt")
+    for giorno in previsioni:
+        giorno["consiglio"] = suggerisci_attivita(giorno)
 
-        # STEP 4 — Studente 4: stampa a schermo
-        stampa_previsioni(previsioni, CITTA)
-        stampa_statistiche(statistiche)
+    previsioni_elaborate_per_citta[nome_citta] = previsioni
+
+    stampa_previsioni_con_consiglio(previsioni, nome_citta)
+    esporta_csv(previsioni, f"previsioni_{nome_citta}.csv")
+
+risultato_confronto = confronta_citta(dati_multi_citta)
+stampa_confronto_citta(risultato_confronto)
+
+scrivi_report_multi_citta(previsioni_elaborate_per_citta, "report_multi_citta.txt")
