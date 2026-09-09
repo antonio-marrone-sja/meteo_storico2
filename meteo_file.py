@@ -1,5 +1,5 @@
+import csv
 import json
-
 
 def salva_json(previsioni, percorso):
 
@@ -30,6 +30,14 @@ def scrivi_report(previsioni, statistiche, citta, percorso):
         f.write(f"  Giorno piu' freddo: {statistiche['giorno_piu_freddo']}\n")
 
     print(f"Report scritto: {percorso}")
+
+def esporta_csv(previsione, percorso):
+
+    nomi_colonne = ["data", "temp_max", "temp_min", "consiglio"]
+
+    with open(percorso, "w", newline="", encoding="utf-8") as f:
+
+        scrittore = csv.DictWriter(f, fieldnames=nomi_colonne)
 
 # --- BLOCCO DI TEST ---
 if __name__ == "__main__":
